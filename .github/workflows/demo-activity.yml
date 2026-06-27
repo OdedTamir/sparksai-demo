@@ -1,0 +1,26 @@
+name: Demo Activity Generator
+
+on:
+  workflow_dispatch:          # adds a "Run workflow" button (your manual burst)
+  schedule:
+    - cron: "17 9 * * 1-5"    # runs ~09:17 UTC, Monday-Friday
+
+permissions:
+  contents: write             # push commits / merge PRs
+  pull-requests: write        # open & review PRs
+  deployments: write          # create deployments & statuses
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate demo activity
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_BRANCH: main      # change if your default branch is not "main"
+        run: bash scripts/generate-demo-activity.sh
